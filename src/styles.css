@@ -1,0 +1,23 @@
+.section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+}
+
+.borderImg {
+    max-width: 80%;
+    max-height: 80%;
+    min-width: 200px;
+    min-height: 200px;
+    border-radius: 5%;
+    border: 2px dashed grey;
+    background-image: url("./assets/no-img.webp");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+}
+img {
+border-radius: 5%; 
+}
