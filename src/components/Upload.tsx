@@ -3,11 +3,11 @@ import {useDropzone} from 'react-dropzone';
 
 const baseStyle = {
   display: 'flex',
-
+  flexDirection: 'column' as const,
+  justifyContent: 'center',
+  gap: '10px',
   alignItems: 'center',
   padding: '20px',
-  borderWidth: 2,
-  borderRadius: 2,
   borderColor: '#eeeeee',
   borderStyle: 'dashed',
   backgroundColor: '#fafafa',
@@ -27,24 +27,45 @@ const rejectStyle = {
   borderColor: '#ff1744',
 };
 
-function DropzoneComponent() {
-  const [files, setFiles] = useState<File[]>([]);
+interface FilePrev extends File {
+  preview: string;
+}
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles(
-      acceptedFiles.map(file =>
-        Object.assign(file, {
-          preview: URL.createObjectURL(file),
-        }),
-      ),
-    );
-  }, []);
+function DropzoneComponent({
+  setBase64Img,
+}: {
+  setBase64Img: React.Dispatch<React.SetStateAction<string | ArrayBuffer>>;
+}) {
+  const [files, setFiles] = useState<FilePrev[]>([]);
+
+  const onDrop = useCallback(
+    <T extends File>(acceptedFiles: T[]) => {
+      setFiles(
+        acceptedFiles.map(file =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          }),
+        ),
+      );
+      const file = acceptedFiles.find(f => f);
+      const reader = new FileReader();
+      if (file) reader.readAsDataURL(file);
+      reader.onload = () => {
+        console.log({
+          src: file,
+          data: reader.result,
+        });
+        if (reader?.result) setBase64Img(reader.result);
+      };
+    },
+    [setBase64Img],
+  );
 
   const {getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject} =
     useDropzone({
       onDrop,
       accept: {
-        image: ['jpeg', 'png'],
+        'image/*': ['.png', '.jpg', '.jpeg'],
       },
     });
 
@@ -59,12 +80,26 @@ function DropzoneComponent() {
   );
 
   const thumbs = files.map(file => (
-    <div key={file.name}>
-      <img src={file.preview} alt={file.name} />
-    </div>
+    <img key={file.name} src={file.preview} alt={file.name} className='imgStyle' />
   ));
-  console.log(thumbs);
+  console.log(files);
 
+  const imageUrlToBase64 = async (url: string) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error('Error converting image URL to Base64:', error);
+      return null;
+    }
+  };
   // clean up
   useEffect(
     () => () => {
@@ -73,14 +108,21 @@ function DropzoneComponent() {
     [files],
   );
 
+  useEffect(() => {
+    if (files[0]?.preview.length !== 0) {
+      imageUrlToBase64(files[0]?.preview);
+    }
+  }, [files]);
+
   return (
-    <section>
-      <div {...getRootProps({style})}>
-        <input {...getInputProps()} />
-        <div>Drag and drop your images here.</div>
+    <div {...getRootProps({style})} className='imgStyle'>
+      <input {...getInputProps()} name='img-data' />
+      <div style={{textAlign: 'center'}}>
+        Перетащите сюда вашe изображениe, или кликните по выделенной области, для выбора
+        из файловой системы.
       </div>
-      <aside>{thumbs}</aside>
-    </section>
+      <aside className='contentCenter'>{thumbs}</aside>
+    </div>
   );
 }
 
