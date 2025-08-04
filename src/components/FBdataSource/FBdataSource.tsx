@@ -33,11 +33,11 @@ export default function FBdataSource(){
   }
     return <div>{isData.objects.length !== 0 && <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
         <h2>Выберите объект из списка</h2>
-    <select name="objects" id="objects">{isData.objects.map(item => <option>{item.name}</option>)}</select>
+    <select name="objects" id="objects">{isData.objects.map(item => <option value={item.id}>{item.name}</option>)}<option selected hidden>Выберите из списка</option></select>
     
         </div>
     }{isData.devices.length !== 0 && <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
         <h2>Выберите устройство из списка</h2>
-        <select name="devices" id="devices">{isData.devices.map(item => <option>{item.name}</option>)}</select>
+        <select name="devices" id="devices">{isData.devices.map(item => <option value={item.id}>{item.name}</option>)} <option selected hidden>Выберите из списка</option></select>
         </div>}</div>
 }
