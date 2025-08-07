@@ -21,15 +21,16 @@ export default function FBdataSource({API_BASE_URL, token, ID_USER, isObject, is
     const [deviceID, setDeviceID] = useState<string | null>(null);
 
 
-const fetchDataAttr = async(deviceId: string, controller: AbortController) => {
+const fetchDataAttr = async(id: string, controller: AbortController) => {
   const type = deviceID ? 'DEVICE' : 'ASSET';
-   const url = `${API_BASE_URL}/api/plugins/telemetry/${type}/${deviceId}/keys/attributes`;
+   const url = `${API_BASE_URL}/api/plugins/telemetry/${type}/${id}/keys/attributes`;
    const responce: string[] = await GetData(token, url, controller.signal);
    if(responce.length !== 0){
      const imgAttrSort = responce.filter(item => item.includes('img'))?.sort();
      if(imgAttrSort.length !== 0){
        const imgIndex = +imgAttrSort[imgAttrSort.length - 1].split('_')[1];
-       setIndex(imgIndex);
+       console.log(imgIndex, responce)
+       setIndex(imgIndex + 1);
      }
 
 
@@ -79,6 +80,7 @@ useEffect(() => {
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
         <h2>Выберите объект из списка</h2>
     <select name="objects" id="objects" onChange={(e) => {setObjectID(e.target.value); setDeviceID(null)}} defaultValue='Выберите из списка'>
+          <option value={''}>Не выбрано</option>
       {isData.objects.map(item => 
       <option value={item.id} key={item.id}>{item.name}</option>)}
     </select>
@@ -87,6 +89,7 @@ useEffect(() => {
       <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
         <h2>Выберите устройство из списка</h2>
         <select name="devices" id="devices" onChange={(e) => {setDeviceID(e.target.value); setObjectID(null)}} defaultValue='Выберите из списка'>
+          <option value={''}>Не выбрано</option>
           {isData.devices.map(item => 
           <option value={item.id} key={item.id}>{item.name}</option>)} 
           </select>

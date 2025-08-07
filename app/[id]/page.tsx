@@ -1,19 +1,19 @@
 import ClientPage from "./client.page";
 
-export default function DynamicPage({
+export default async function DynamicPage({
   params,
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { token: string; authority: string };
 }) {
 
-const { id } = params;
-const token = searchParams.token as string;
-const authorityParams = searchParams.authority as string;
-const authority = authorityParams?.split('_')[0].toLowerCase()
+const { id } = await params;
+const {token, authority}:{token: string; authority: string} =  await searchParams;
 
-return <ClientPage id={id} token={token} authority={authority}/>
+const authorityRes = authority?.split('_')[0].toLowerCase();
+
+return <ClientPage id={id} token={token} authority={authorityRes}/>
 
 
 }

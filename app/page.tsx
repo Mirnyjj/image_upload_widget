@@ -7,6 +7,6 @@ export default function Home() {
 
  
   return (
-    <Link href={API_BASE_URL}><h1>Вернитесь на страницу ThingsBoard</h1></Link>
+    <Link href={API_BASE_URL} className="section"><h1>Вернитесь на страницу ThingsBoard</h1></Link>
   );
 }
