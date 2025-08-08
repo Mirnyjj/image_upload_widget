@@ -46,3 +46,9 @@ export type Attribute = {
   json_v: string | null;
   last_update_ts: number;
 }
+
+export type AttributeValue = {
+      lastUpdateTs: number;
+    key: string;
+    value: string | number;
+}

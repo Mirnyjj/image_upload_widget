@@ -1,71 +1,84 @@
-'use client'
+"use client";
 
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {useDropzone} from 'react-dropzone';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { debounce } from "lodash";
 
-const baseStyle = {
-  display: 'flex',
-  flexDirection: 'column' as const,
-  justifyContent: 'center',
-  gap: '10px',
-  alignItems: 'center',
-  padding: '20px',
-  borderColor: '#eeeeee',
-  borderStyle: 'dashed',
-  backgroundColor: '#fafafa',
-  color: '#bdbdbd',
-  transition: 'border .3s ease-in-out',
+const baseStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
+  gap: "10px",
+  alignItems: "center",
+  padding: "20px",
+  borderColor: "#eeeeee",
+  borderStyle: "dashed",
+  backgroundColor: "#fafafa",
+  color: "#bdbdbd",
+  transition: "border .3s ease-in-out",
 };
-//   flexDirection: 'column',
+
 const activeStyle = {
-  borderColor: '#2196f3',
+  borderColor: "#2196f3",
 };
 
 const acceptStyle = {
-  borderColor: '#00e676',
+  borderColor: "#00e676",
 };
 
 const rejectStyle = {
-  borderColor: '#ff1744',
+  borderColor: "#ff1744",
 };
 
-interface FilePrev extends File {
-  preview: string;
-}
+type FilePrev = File & { preview: string };
 
-function DropzoneComponent({
+function StableDropzone({
   setBase64Img,
 }: {
-  setBase64Img: React.Dispatch<React.SetStateAction<string | ArrayBuffer | null>>;
+  setBase64Img: React.Dispatch<
+    React.SetStateAction<string | ArrayBuffer | null>
+  >;
 }) {
   const [files, setFiles] = useState<FilePrev[]>([]);
 
+  const handleDragOver = debounce((e: React.DragEvent) => {
+    e.preventDefault();
+  }, 100);
+
   const onDrop = useCallback(
-    <T extends File>(acceptedFiles: T[]) => {
-      setFiles(
-        acceptedFiles.map(file =>
-          Object.assign(file, {
-            preview: URL.createObjectURL(file),
-          }),
-        ),
-      );
-      const file = acceptedFiles.find(f => f);
+    (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0) return;
+
+      const newFiles = acceptedFiles.map((file) => ({
+        ...file,
+        preview: URL.createObjectURL(file),
+      }));
+
+      setFiles(newFiles);
+
       const reader = new FileReader();
-      if (file) reader.readAsDataURL(file);
+      reader.readAsDataURL(acceptedFiles[0]);
       reader.onload = () => {
-        if (reader?.result) setBase64Img(reader.result);
+        if (reader.result) setBase64Img(reader.result);
       };
     },
-    [setBase64Img],
+    [setBase64Img]
   );
 
-  const {getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject} =
-    useDropzone({
-      onDrop,
-      accept: {
-        'image/*': ['.png', '.jpg', '.jpeg'],
-      },
-    });
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragAccept,
+    isDragReject,
+  } = useDropzone({
+    onDrop,
+    accept: {
+      "image/png": [],
+      "image/jpg": [],
+      "image/jpeg": [],
+    },
+  });
 
   const style = useMemo(
     () => ({
@@ -74,53 +87,38 @@ function DropzoneComponent({
       ...(isDragAccept ? acceptStyle : {}),
       ...(isDragReject ? rejectStyle : {}),
     }),
-    [isDragActive, isDragReject, isDragAccept],
+    [isDragActive, isDragReject, isDragAccept]
   );
-
-  const thumbs = files.map(file => (
-    <img key={file.name} src={file.preview} alt={file.name} className='imgStyle' />
+  console.log(files);
+  const thumbs = files.map((file) => (
+    <img
+      key={file.preview}
+      src={file.preview}
+      alt="Изображение для загрузки"
+      className="imgStyle"
+    />
   ));
 
-  const imageUrlToBase64 = async (url: string) => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.error('Error converting image URL to Base64:', error);
-      return null;
-    }
-  };
-  // clean up
-  useEffect(
-    () => () => {
-      files.forEach(file => URL.revokeObjectURL(file.preview));
-    },
-    [files],
-  );
-
+  // Очистка Blob URL при размонтировании
   useEffect(() => {
-    if (files[0]?.preview.length !== 0) {
-      imageUrlToBase64(files[0]?.preview);
-    }
+    return () => {
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
+    };
   }, [files]);
 
   return (
-    <div {...getRootProps({style})} className='imgStyle'>
-      <input {...getInputProps()} name='img-data' />
-      <div style={{textAlign: 'center'}}>
-        Перетащите сюда вашe изображениe, или кликните по выделенной области, для выбора
-        из файловой системы.
+    <div
+      {...getRootProps({ style, onDragOver: handleDragOver })}
+      className="imgStyle"
+    >
+      <input {...getInputProps()} name="img-data" />
+      <div style={{ textAlign: "center" }}>
+        Перетащите сюда вашe изображениe, или кликните по выделенной области,
+        для выбора из файловой системы.
       </div>
-      <aside className='contentCenter'>{thumbs}</aside>
+      <aside className="contentCenter">{thumbs}</aside>
     </div>
   );
 }
 
-export default DropzoneComponent;
+export default StableDropzone;

@@ -5,12 +5,13 @@ import { Attribute } from "@/app/service/types";
 interface RouteParams {
   params: Promise<{
     id: string;
-    attribute_key: string
   }>;
 }
 
 export async function GET(request: NextRequest, params: RouteParams) {
-  const { id, attribute_key } = await params.params;
+  const { id } = await params.params;
+  const { searchParams } = new URL(request.url);
+  const attribute_key = searchParams.get("attribute_key");
   if (!id && !attribute_key) {
     return NextResponse.json(
       { error: "Attribute ID is required" },
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest, params: RouteParams) {
     );
   }
   try {
-    const attribute = await getAttribute(id, attribute_key);
+    const attribute = await getAttribute(id, attribute_key || "");
     if (!attribute) {
       return NextResponse.json(
         { error: "Attribute not found" },
@@ -81,22 +82,25 @@ export async function DELETE(
   params: RouteParams
 ): Promise<NextResponse> {
   try {
-    const { id, attribute_key } = await params.params;
-      if (!id && !attribute_key) {
-        return NextResponse.json(
-          { error: "Attribute ID is required" },
-          { status: 400 }
-        );
-      }
-  
-      await deleteAttribute(id, attribute_key);
+    const { id } = await params.params;
+    const { searchParams } = new URL(request.url);
+    const attribute_key = searchParams.get("attribute_key");
+    console.log(id, attribute_key, "params");
+    if (!id && !attribute_key) {
       return NextResponse.json(
-        { success: true },
-        {
-          status: 200,
-          headers: { "Content-Type": "application/json" },
-        }
+        { error: "Attribute ID is required" },
+        { status: 400 }
       );
+    }
+
+    await deleteAttribute(id, attribute_key || "");
+    return NextResponse.json(
+      { success: true },
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("DELETE Attribute Error:", error);
     return NextResponse.json(

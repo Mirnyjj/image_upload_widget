@@ -1,31 +1,278 @@
-
 .section {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20%;
-    width: auto;
-    height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
 }
+.imageSection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 20px;
+  width: 100%;
+}
+
 .imgStyle {
-border-radius: 2%; 
+  border-radius: 2%;
   max-width: 80%;
-    max-height: 80%;
-    min-width: 200px;
-    min-height: 200px;
+  max-height: 80%;
+  min-width: 200px;
+  min-height: 200px;
 }
 
 .contentCenter {
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  max-width: 80%;
+  max-height: 80%;
+  min-width: 200px;
+  min-height: 200px;
+  align-items: center;
+  justify-content: center;
 }
 
-button {
-  text-align: center;
-  font-size: 12px;
-  font-weight: 400;
-  padding: 10px;
-  border-radius: 2px;
+.buttonTrash {
+  position: relative;
+  padding: 0;
+  margin: 0;
   border: none;
+  background-color: rgba(0, 0, 0, 0.01);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+  }
+
+  &:focus:not(:active)::after {
+    animation: ripple 0.6s ease-out;
+  }
+}
+
+.imageTrash {
+  position: absolute;
+  right: 5px;
+  transform: translateY(-95px);
+  background-image: red;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  min-width: 120px;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%, -50%);
+    transform-origin: 50% 50%;
+  }
+
+  &:focus:not(:active)::after {
+    animation: ripple 0.6s ease-out;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Базовые стили оверлея */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Стили контента модалки */
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 95%;
+  max-width: 500px;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+  overflow: hidden;
+}
+
+.modal-overlay.visible .modal-content {
+  transform: translateY(0);
+}
+
+/* Шапка модалки */
+.modal-header {
+  display: flex;
+  padding: 20px;
+  gap: 16px;
+}
+
+.modal-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #fee2e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-text {
+  flex: 1;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.modal-description {
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Футер с кнопками */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  background-color: #f9fafb;
+  gap: 12px;
+}
+
+/* Стили кнопок */
+.modal-btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background-color: white;
+  color: #111827;
+  border: 1px solid #d1d5db;
+}
+
+.cancel-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.confirm-btn {
+  background-color: #dc2626;
+  color: white;
+  border: 1px solid transparent;
+}
+
+.confirm-btn:hover {
+  background-color: #b91c1c;
+}
+
+/* Адаптив для мобилок */
+@media (max-width: 480px) {
+  .modal-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-btn {
+    width: 100%;
+  }
 }

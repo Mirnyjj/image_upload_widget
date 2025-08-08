@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { GetData } from "../service/GetData";
 import FBdataSource from "../components/FBdataSource/FBdataSource";
 import DropzoneComponent from "../components/converterBase64/Upload";
+import StableDropzone from "../components/converterBase64/Upload";
 
 type Props = {
   id: string;
@@ -69,7 +70,7 @@ export default function ClientPage({ id, token, authority }: Props) {
             setMessageRequest("Изображение успешно загружено!");
             setBase64Img(null);
             setIsDeviceID(null);
-            setIndex
+            setIndex;
             setTimeout(() => setMessageRequest(""), 2000);
           }
         })
@@ -95,7 +96,7 @@ export default function ClientPage({ id, token, authority }: Props) {
           setMessageRequest("Изображение успешно загружено!");
           setBase64Img(null);
           setIsObjectID(null);
-          setIndex
+          setIndex;
           setTimeout(() => setMessageRequest(""), 2000);
         }
       })
@@ -115,19 +116,20 @@ export default function ClientPage({ id, token, authority }: Props) {
         authority={authority}
         setIndex={setIndex}
       />
-      <DropzoneComponent setBase64Img={setBase64Img} />
+      <StableDropzone setBase64Img={setBase64Img} />
       {base64Img && (
         <button
           onClick={() =>
             handleChangeData(isObjectID, API_BASE_URL_TB, token, base64Img)
           }
+          className="button"
           type="submit"
           disabled={disabled}
         >
           Загрузить на сервер
         </button>
       )}
-      {error && <p style={{ color: "red"}}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </section>
   );
 }
