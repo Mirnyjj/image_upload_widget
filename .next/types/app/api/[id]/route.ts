@@ -1,4 +1,4 @@
-// File: /home/maksim/Projects/image_upload_widget/app/api/[id]/route.ts
+// File: C:\Users\user\Desktop\Projects\Widgets\image_upload_widget\app\api\[id]\route.ts
 import * as entry from '../../../../../app/api/[id]/route.js'
 import type { NextRequest } from 'next/server.js'
 

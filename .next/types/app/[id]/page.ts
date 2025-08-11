@@ -1,4 +1,4 @@
-// File: /home/maksim/Projects/image_upload_widget/app/[id]/page.tsx
+// File: C:\Users\user\Desktop\Projects\Widgets\image_upload_widget\app\[id]\page.tsx
 import * as entry from '../../../../app/[id]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

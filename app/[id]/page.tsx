@@ -4,16 +4,14 @@ export default async function DynamicPage({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { token: string; authority: string };
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ token: string; authority: string }>;
 }) {
+  const { id } = await params;
+  const { token, authority }: { token: string; authority: string } =
+    await searchParams;
 
-const { id } = await params;
-const {token, authority}:{token: string; authority: string} =  await searchParams;
+  const authorityRes = authority?.split("_")[0].toLowerCase();
 
-const authorityRes = authority?.split('_')[0].toLowerCase();
-
-return <ClientPage id={id} token={token} authority={authorityRes}/>
-
-
+  return <ClientPage id={id} token={token} authority={authorityRes} />;
 }
