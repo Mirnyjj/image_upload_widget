@@ -45,16 +45,19 @@ export default function FBdataSource({
           const imgIndex = +imgAttrSort[imgAttrSort.length - 1].split("_")[1];
           setIndex(imgIndex + 1);
           const urlAttr = `${API_BASE_URL}/api/plugins/telemetry/${type}/${id}/values/attributes?keys=${imgKeys}`;
-          const attrValue: AttributeValue[] = await GetData(
+          const attrValueResponce: AttributeValue[] = await GetData(
             token,
             urlAttr,
             controller.signal
           );
-          if (attrValue.length !== 0) {
-            setAttrValue(attrValue);
+          if (attrValueResponce.length !== 0) {
+            setAttrValue(attrValueResponce);
           }
-          console.log(attrValue);
+        } else {
+          setAttrValue([]);
         }
+      } else {
+        setAttrValue([]);
       }
     },
     [objectID, deviceID, attrValue]
@@ -92,6 +95,8 @@ export default function FBdataSource({
       controller.abort();
     };
   }, [token]);
+
+  console.log(attrValue);
 
   if (!isData) {
     return <div>Loading...</div>;
