@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { GetData } from "../service/GetData";
 import FBdataSource from "../components/FBdataSource/FBdataSource";
-import DropzoneComponent from "../components/converterBase64/Upload";
 import StableDropzone from "../components/converterBase64/Upload";
 
 type Props = {
@@ -21,10 +20,14 @@ export default function ClientPage({ id, token, authority }: Props) {
   const [disabled, setDisabled] = useState(true);
   const [index, setIndex] = useState<number>();
   const [messageRequest, setMessageRequest] = useState("");
-  const API_BASE_URL_TB = "http://localhost:8080";
-  const API_BASE_URL_NEXT = "http://localhost:3000";
+  const [currentUrl, setCurrentUrl] = useState<string>("");
+  const [API_BASE_URL_TB, setAPI_BASE_URL_TB] = useState<string>("");
 
   useEffect(() => {
+    setCurrentUrl(window.location.href);
+    if (!currentUrl) return;
+    const url = new URL(currentUrl);
+    setAPI_BASE_URL_TB(`${url.protocol}//${url.hostname}:8080`);
     if (isDeviceID || isObjectID) {
       setDisabled(false);
       setError("");
@@ -85,7 +88,7 @@ export default function ClientPage({ id, token, authority }: Props) {
       attribute_key: `img_${index ? index : 0}`,
       str_v: data,
     };
-    const url = `${API_BASE_URL_NEXT}/api`;
+    const url = `/api`;
 
     fetch(url, {
       method: "POST",
