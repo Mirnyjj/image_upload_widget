@@ -9,9 +9,10 @@ type Props = {
   id: string;
   token: string;
   authority: string;
+  baseUrl: string;
 };
 
-export default function ClientPage({ id, token, authority }: Props) {
+export default function ClientPage({ id, token, authority, baseUrl }: Props) {
   const [base64Img, setBase64Img] = useState<string | ArrayBuffer | null>(null);
   const [error, setError] = useState("");
   const [isObjectID, setIsObjectID] = useState<string | null>(null);
@@ -20,14 +21,9 @@ export default function ClientPage({ id, token, authority }: Props) {
   const [disabled, setDisabled] = useState(true);
   const [index, setIndex] = useState<number>();
   const [messageRequest, setMessageRequest] = useState("");
-  const [currentUrl, setCurrentUrl] = useState<string>("");
-  const [API_BASE_URL_TB, setAPI_BASE_URL_TB] = useState<string>("");
+  const API_BASE_URL_TB = `${baseUrl}:8080`;
 
   useEffect(() => {
-    setCurrentUrl(window.location.href);
-    if (!currentUrl) return;
-    const url = new URL(currentUrl);
-    setAPI_BASE_URL_TB(`${url.protocol}//${url.hostname}:8080`);
     if (isDeviceID || isObjectID) {
       setDisabled(false);
       setError("");
@@ -51,6 +47,7 @@ export default function ClientPage({ id, token, authority }: Props) {
     }
   }, [isDeviceID, isObjectID]);
 
+  console.log(API_BASE_URL_TB);
   const handleChangeData = async (
     objectID: string | null,
     API_BASE_URL: string,
