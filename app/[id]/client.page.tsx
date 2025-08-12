@@ -38,7 +38,7 @@ export default function ClientPage({ id, token, authority, baseUrl }: Props) {
   ) => {
     const newPhoto = {
       entity_id: objectID,
-      entity_type: "ASSET",
+      entity_type: isObjectID ? "ASSET" : "DEVICE",
       attribute_type: "SERVER_SCOPE",
       attribute_key: `img_${index ? index : 0}`,
       str_v: data,
